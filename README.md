@@ -1,9 +1,9 @@
 # Atem Gateway
 
-**Description**:  A micro service for controlling atem video switchers.
+**Description**:  A micro service for controlling [ATEM](https://www.blackmagicdesign.com/products/atemtelevisionstudio) video switchers.
 
   - **Technology stack**: Python, hmux
-  - **Status**:  Production [CHANGELOG](CHANGELOG.md).
+  - **Status**:  Production
 
 ## Dependencies
 
