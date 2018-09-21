@@ -3,13 +3,17 @@
 
 from socket import *
 from select import select
-from sys import stdin
+from sys import stdin,argv
 
 config = dict()
 #exec(open("config.py").read(),config)
+if len(argv) > 1:
+	host = argv[1]
+else:
+	host = "localhost"
 
 sock = socket()
-sock.connect( ("localhost",config.get("hmuxport",12345)) )
+sock.connect( (host,config.get("hmuxport",12345)) )
 print "Connected"
 running = True
 while running:
@@ -22,8 +26,6 @@ while running:
 			sdata = "<SRCHTC-Video>\r\n\x01CUE:HB:%s\x00"%data[1]
 		elif data[0] == "t":
 			sdata = "<SRCHTC-Video>\r\n\x01TAKE:HB:%s:6:M\x00"%data[1]
-		elif data[0] == "c":
-			sdata = "<SRCHTC-Video>\r\n\x01TAKE:HB:%s:0:C\x00"%data[1]
 		elif data[0] == "w":
 			sdata = "<SRCHTC-Video>\r\n\x01TAKE:HB:%s:7:W\x00"%data[1]
 		elif data[0] == "k":
@@ -53,7 +55,7 @@ while running:
 			while 1:
 				try:
 					sock = socket()
-					sock.connect( ("localhost",config.get("hmuxport",12345)) )
+					sock.connect( (host,config.get("hmuxport",12345)) )
 					break
 				except:
 					pass
