@@ -9,7 +9,7 @@ from time import sleep
 import os
 import math
 
-version = "1.0.0"
+version = "1.1.0"
 
 logging.basicConfig()
 class AtemGateway:
@@ -172,6 +172,12 @@ class AtemGateway:
 			print cmd,src,volume,frames
 			if int(frames) <= 0: frames = 1
 			self.moveVolume(int(src),volume=float(volume),frames=int(frames))
+		elif cmd.startswith("SSOURCE"):
+			source, = args
+			self.atem.ssource(int(source))
+		elif cmd.startswith("BOXSOURCE"):
+			boxnum,source = args
+			self.atem.boxsrc(int(boxnum), 1, int(source))
 		elif cmd.startswith("MVI"):
 			mviewer,window,source = args
 			self.atem.multiViewInput(int(mviewer),int(window),int(source))
