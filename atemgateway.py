@@ -9,7 +9,7 @@ from time import sleep
 import os
 import math
 
-version = "1.1.1"
+version = "1.2.0"
 
 
 logging.basicConfig()
@@ -146,6 +146,27 @@ class AtemGateway:
         elif cmd == "KEY":
             me,keyer,enabled = args
             self.atem.keyOn(int(enabled),me=int(me),keyer=int(keyer))
+        elif cmd == "KEYFILL":
+            me,keyer,source = args
+            self.atem.keyFill(int(source),me=int(me),keyer=int(keyer))
+        elif cmd == "CHROMAKEY":
+            me,keyer,enabled = args
+            self.atem.keyType(int(enabled),int(keyer),int(me))
+        elif cmd == "CHROMAHUE":
+            me,keyer,value = args
+            self.atem.keyChroma(int(me), int(keyer), hue=int(float(value)*10))
+        elif cmd == "CHROMAGAIN":
+            me,keyer,value = args
+            self.atem.keyChroma(int(me), int(keyer), gain=int(float(value)*10))
+        elif cmd == "CHROMAYSUP":
+            me,keyer,value = args
+            self.atem.keyChroma(int(me), int(keyer), ysup=int(float(value)*10))
+        elif cmd == "CHROMALIFT":
+            me,keyer,value = args
+            self.atem.keyChroma(int(me), int(keyer), lift=int(float(value)*10))
+        elif cmd == "CHROMANARROW":
+            me,keyer,value = args
+            self.atem.keyChroma(int(me), int(keyer), narrow=int(value))
         elif cmd == "DSK":
             keyer,enabled = args
             self.atem.dskOn(int(keyer),int(enabled))

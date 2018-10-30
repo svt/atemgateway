@@ -195,6 +195,35 @@ class AtemDevice:
         self.ac.sendCmd("CKeF",[me,keyer,src>>8,src&0xFF])
     def keyCut(self,src,me=0,keyer=0):
         self.ac.sendCmd("CKeC",[me,keyer,src>>8,src&0xFF])
+    def keyChroma(self, me=0, keyer=0, hue=None, gain=None, ysup=None, lift=None, narrow=None):
+        mask = 0
+        if hue is not None:
+            mask |= (1<<0)
+        else:
+            hue = 0
+        if gain is not None:
+            mask |= (1<<1)
+        else:
+            gain = 0
+        if ysup is not None:
+            mask |= (1<<2)
+        else:
+            ysup = 0
+        if lift is not None:
+            mask |= (1<<3)
+        else:
+            lift = 0
+        if narrow is not None:
+            mask |= (1<<4)
+        else:
+            narrow = 0
+        self.ac.sendCmd("CKCk",[mask,me,keyer,0]
+                + uint16(hue)
+                + uint16(gain)
+                + uint16(ysup)
+                + uint16(lift)
+                + [narrow, 0, 0, 0]
+                )
     def dskFill(self,keyer,src):
         self.ac.sendCmd("CDsF",[keyer,0]+uint16(src))
     def dskKey(self,keyer,src):
