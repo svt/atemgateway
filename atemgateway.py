@@ -9,9 +9,6 @@ from time import sleep
 import os
 import math
 
-version = "1.2.0"
-
-
 logging.basicConfig()
 class AtemGateway:
     def __init__(self, ip, hmuxport,statusdest="HTC-Video"):
@@ -262,7 +259,7 @@ if __name__ == '__main__':
         cfg = {"server":"10.20.126.242","hmuxport":12345,"statusdest":"SONYMIXER"}
     try:
         from pysvt.herrchef import HerrChef
-        hc = HerrChef("atemgateway",version)
+        hc = HerrChef()
         hc.start()
     except:
         pass
