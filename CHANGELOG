@@ -1,3 +1,15 @@
+1.2.4
+Release
+
+1.2.4a3
+Fixed SSOURCE for 8.6 and added COLOR command to set values for color generators
+
+1.2.4a2
+Support for atem firmware 8.6 and added VERSION command
+
+1.2.4a1
+Added BOXENABLE to add/remove dve-boxes
+
 1.2.3
 Added KEYMASK - John 200501
 Fixed uint16 in atem.py

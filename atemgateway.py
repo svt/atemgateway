@@ -197,6 +197,9 @@ class AtemGateway:
         elif cmd == "BOXSOURCE":
             boxnum, source = args
             self.atem.boxsrc(int(boxnum), 1, int(source))
+        elif cmd == "BOXENABLE":
+            boxnum,state = args
+            self.atem.boxsrc(int(boxnum),enable=int(state))
         elif cmd == "BOXPOS":
             boxnum, x, y, size = args
             self.atem.boxsrc(int(boxnum), 
@@ -219,6 +222,7 @@ class AtemGateway:
                         )
         elif cmd == "BOXPOSCROP":
             boxnum, x, y, size, top, bottom, left, right = args
+            print "BPC:",boxnum, x, y, size, top, bottom, left, right
             self.atem.boxsrc(int(boxnum), cropped=1, 
                 x=int(float(x)*100), 
                 y=int(float(y)*100), 
@@ -239,6 +243,15 @@ class AtemGateway:
         elif cmd.startswith("MVI"):
             mviewer,window,source = args
             self.atem.multiViewInput(int(mviewer),int(window),int(source))
+        elif cmd.startswith("COLOR"):
+            num,hue,sat,luma = args
+            self.atem.colorgen(int(num), int(hue), int(sat), int(luma))
+        elif cmd.startswith("VERSION"):
+            if self.atem.version:
+                ver = self.atem.version
+                self.hmux.send("<PORT%s>\x01VERSION %s.%s\x00"%(src,ver[0],ver[1]))
+            else:
+                self.hmux.send("<PORT%s>\x01VERSION unknown\x00"%(src,))
         else:
             print "Unknown command",cmd,args
             
@@ -258,8 +271,8 @@ if __name__ == '__main__':
             from daemonctl import dts
         except:
             import daemontools as dts
-        name = os.path.basename(__file__).split(".")[0]
-        dts.init(name)
+        #name = os.path.basename(__file__).split(".")[0]
+        dts.init()
         cfg = dts.cfg
     except Exception as e:
         print e
