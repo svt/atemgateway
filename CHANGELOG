@@ -1,3 +1,6 @@
+1.2.4a2
+Support for atem firmware 8.6 and added VERSION command
+
 1.2.4a1
 Added BOXENABLE to add/remove dve-boxes
 

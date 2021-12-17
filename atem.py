@@ -193,6 +193,8 @@ class AtemDevice:
         self.videomodes = dict()
         self.videomode = -1
         self.srcNames = {}
+        self.version = None
+        self.v86 = True
     def cb(self,cmd,args):
         try:
             self.callback(cmd,args)
@@ -477,9 +479,18 @@ class AtemDevice:
         left = masker.getValueOrZero(left, 256)
         right = masker.getValueOrZero(right, 512)
         mask = masker.mask
+        if self.v86:
+            box = uint16(boxnum-1)
+            ena = [enable,0]
+            padding = []
+        else:
+            box = [boxnum-1]
+            ena = [enable]
+            padding = [0,0]
         self.ac.sendCmd("CSBP",
                   uint16(mask)
-                + [boxnum-1, enable]
+                + box
+                + ena
                 + uint16(src)
                 + int16(x)
                 + int16(y)
@@ -489,7 +500,7 @@ class AtemDevice:
                 + uint16(bottom)
                 + uint16(left)
                 + uint16(right)
-                + [0, 0]
+                + padding
                 )
     def keyMask(self,me=None,keyer=None,masked=None,top=None,bottom=None,left=None,right=None):
         mask = 1+2+4+8+16
@@ -646,6 +657,14 @@ class AtemDevice:
             short = args[22:26].split("\x00",1)[0]
             self.srcNames[name] = src
             self.srcNames[short] = src
+        elif cmd == "_ver":
+            self.version = unpack("!HH",args)
+            print "Found version %r"%(self.version,)
+            if self.version >= (2,30):
+                self.v86 = True
+            else:
+                self.v86 = False
+            self.cb("version",self.version)
         # Internal commands
         elif cmd in ["connect","disconnect","timeout"]:
             self.cb(cmd,{})
