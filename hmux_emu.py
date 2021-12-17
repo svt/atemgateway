@@ -63,6 +63,16 @@ while running:
                             sdata = "<SRCHTC-Video>\r\n\x01CHROMANARROW:%s:%s:%s\x00"%(sp[1],sp[2],sp[3])
                     elif sp[0] == "cf":
                             sdata = "<SRCHTC-Video>\r\n\x01KEYFILL:%s:%s:%s\x00"%(sp[1],sp[2],sp[3])
+                    elif sp[0] == "bs":
+                        sdata = "<SRCHTC-Video>\r\n\x01BOXSOURCE:%s:%s\x00"%(sp[1],sp[2])
+                    elif sp[0] == "bp":
+                        sdata = "<SRCHTC-Video>\r\n\x01BOXPOS:%s:%s:%s:%s\x00"%(sp[1],sp[2],sp[3],sp[4])
+                    elif sp[0] == "bcd":
+                        sdata = "<SRCHTC-Video>\r\n\x01BOXCROP:%s:OFF\x00"%(sp[1],)
+                    elif sp[0] == "bc":
+                        sdata = "<SRCHTC-Video>\r\n\x01BOXCROP:%s:%s:%s:%s:%s\x00"%(sp[1],sp[2],sp[3],sp[4],sp[5])
+                    elif sp[0] == "bpc":
+                        sdata = "<SRCHTC-Video>\r\n\x01BOXPOSCROP:%s:%s:%s:%s:%s:%s:%s:%s\x00"%(sp[1],sp[2],sp[3],sp[4],sp[5],sp[6],sp[7],sp[8])
                 except Exception as e:
                     print e
 		if sdata:

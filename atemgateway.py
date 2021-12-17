@@ -194,12 +194,43 @@ class AtemGateway:
             print cmd,src,volume,frames
             if int(frames) <= 0: frames = 1
             self.moveVolume(int(src),volume=float(volume),frames=int(frames))
-        elif cmd.startswith("SSOURCE"):
+        elif cmd == "SSOURCE":
             source, = args
             self.atem.ssource(int(source))
-        elif cmd.startswith("BOXSOURCE"):
-            boxnum,source = args
+        elif cmd == "BOXSOURCE":
+            boxnum, source = args
             self.atem.boxsrc(int(boxnum), 1, int(source))
+        elif cmd == "BOXPOS":
+            boxnum, x, y, size = args
+            self.atem.boxsrc(int(boxnum), 
+                    x=int(float(x)*100), 
+                    y=int(float(y)*100), 
+                    size=int(float(size)*1000),
+                    )
+        elif cmd == "BOXCROP":
+            if len(args) == 2:
+                boxnum, enable = args
+                if enable.lower() == "off":
+                    self.atem.boxsrc(int(boxnum), cropped=0)
+            else:
+                boxnum, top, bottom, left, right = args
+                self.atem.boxsrc(int(boxnum), cropped=1, 
+                        top=int(float(top)*1000), 
+                        bottom=int(float(bottom)*1000), 
+                        left=int(float(left)*1000), 
+                        right=int(float(right)*1000),
+                        )
+        elif cmd == "BOXPOSCROP":
+            boxnum, x, y, size, top, bottom, left, right = args
+            self.atem.boxsrc(int(boxnum), cropped=1, 
+                x=int(float(x)*100), 
+                y=int(float(y)*100), 
+                size=int(float(size)*1000),
+                top=int(float(top)*1000), 
+                bottom=int(float(bottom)*1000), 
+                left=int(float(left)*1000), 
+                right=int(float(right)*1000),
+                )
         elif cmd.startswith("MVI"):
             mviewer,window,source = args
             self.atem.multiViewInput(int(mviewer),int(window),int(source))

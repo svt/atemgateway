@@ -81,6 +81,3 @@ Protocol documentation found at:
 Videomodes taken from libqatemcontrol
  https://github.com/petersimonsson/libqatemcontrol/blob/master/qatemconnection.cpp
 
-## Primary Maintainer
-
-Andreas Åkerlund https://github.com/thezulk  

@@ -1,3 +1,6 @@
+1.2.1
+Added BOXPOS, BOXCROP and BOXPOSCROP
+
 1.2.0
 Added Chroma Key support
 CMD ME KEYER VALUE

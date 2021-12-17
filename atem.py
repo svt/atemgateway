@@ -35,16 +35,33 @@ videomodes = {
 17: ("2160p29.97", (3840, 2160), 29.97),
 }
 
+class MaskDefault:
+    def __init__(self):
+        self.mask = 0
+    def getValueOrZero(self, value, mask):
+        if value is None:
+            return 0
+        else:
+            self.mask |= mask
+            return value
 
 def str2hex(string):
     return " ".join(["%02x"%ord(x) for x in string])
 
+def checkByteList(bytelist):
+    for b in bytelist:
+        if b > 255 or b < 0:
+            raise ValueError("Byte not within sane values %r"%(b,))
+    return bytelist
+
 def int16(num):
-    return [ord(x) for x in pack("!h",num)]
+    return checkByteList([ord(x) for x in pack("!h",num)])
+
 def uint16(num):
-    return [num>>8, num&0xFF]
+    return checkByteList([num>>8, num&0xFF])
+
 def uint32(num):
-    return [(num>>24)&0xFF, (num>>16)&0xFF, (num>>8)&0xFF, num&0xFF]
+    return checkByteList([(num>>24)&0xFF, (num>>16)&0xFF, (num>>8)&0xFF, num&0xFF])
 
 class AtemConnection(Thread):
     def __init__(self, ip, port=9910,callback=None):
@@ -399,8 +416,9 @@ class AtemDevice:
         self.ac.sendCmd("DAut",[me,0,0,0])
     def multiViewInput(self, mviewer, window, source):
         self.ac.sendCmd("CMvI",[mviewer,window]+uint16(source))
-    def ssource(self, bg):
-        mask = 1
+    def ssource(self, bg=None):
+        masker = MaskDefault()
+        bg = masker.getValueOrZero(bg, 1)
         key=0
         fore=0
         premulti=0
@@ -420,6 +438,7 @@ class AtemDevice:
         borderluma=0
         lightdir=0
         lightalt=0
+        mask = masker.mask
         self.ac.sendCmd("CSSc", 
                 uint32(mask)
                 + uint16(bg)
@@ -438,37 +457,39 @@ class AtemDevice:
                 + [lightalt,0]
 
                 )
-    def boxsrc(self, boxnum, enable=None, src=None):
-        mask = 3
+    def boxsrc(self, boxnum, enable=None, src=None, 
+            x=None, y=None, size=None, 
+            cropped=None, 
+            top=None, bottom=None, 
+            left=None, right=None):
+        masker = MaskDefault()
+        # 0 1 2 3  4  5  6   7   8   9
         # 1 2 4 8 16 32 64 128 256 512
-        if enable is None:
-            mask -= 1
-            enable = 0
-        if src is None:
-            src = 0
-            enable -= 2
-        print mask, enable, src
-        x = 0
-        y = 0
-        size = 0
-        cropped = 0
-        top = 0
-        bottom = 0
-        left = 0
-        right = 0
+        # print mask, enable, src
+        enable = masker.getValueOrZero(enable, 1)
+        src = masker.getValueOrZero(src, 2)
+        x = masker.getValueOrZero(x, 4)
+        y = masker.getValueOrZero(y, 8)
+        size = masker.getValueOrZero(size, 16)
+        cropped = masker.getValueOrZero(cropped, 32)
+        top = masker.getValueOrZero(top, 64)
+        bottom = masker.getValueOrZero(bottom, 128)
+        left = masker.getValueOrZero(left, 256)
+        right = masker.getValueOrZero(right, 512)
+        mask = masker.mask
         self.ac.sendCmd("CSBP",
                   uint16(mask)
                 + [boxnum-1, enable]
                 + uint16(src)
-                + uint16(x)
-                + uint16(y)
+                + int16(x)
+                + int16(y)
                 + uint16(size)
                 + [cropped,0]
                 + uint16(top)
                 + uint16(bottom)
                 + uint16(left)
                 + uint16(right)
-                + [0,0]
+                + [0, 0]
                 )
     def parseCmd(self, cmd, args):
         if cmd == "_VMC":
