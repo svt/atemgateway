@@ -58,7 +58,7 @@ def int16(num):
     return checkByteList([ord(x) for x in pack("!h",num)])
 
 def uint16(num):
-    return checkByteList([num>>8, num&0xFF])
+    return checkByteList([(num>>8)&0xFF, num&0xFF])
 
 def uint32(num):
     return checkByteList([(num>>24)&0xFF, (num>>16)&0xFF, (num>>8)&0xFF, num&0xFF])
@@ -274,7 +274,7 @@ class AtemDevice:
         self.ac.sendCmd("CDsG",[mask,keyer,premulti,0]+uint16(int(clip*10.0))+uint16(int(gain*10.0))+[invert,0,0,0])
     def dskMask(self,keyer,masked=None,top=None,bottom=None,left=None,right=None):
         mask = 0
-        self.sc.sendCmd("CDsM",[mask,keyer,masked,0]+
+        self.ac.sendCmd("CDsM",[mask,keyer,masked,0]+
             uint16(int(top*1000.0))+
             uint16(int(bottom*1000.0))+
             uint16(int(left*1000.0))+
@@ -491,6 +491,20 @@ class AtemDevice:
                 + uint16(right)
                 + [0, 0]
                 )
+    def keyMask(self,me=None,keyer=None,masked=None,top=None,bottom=None,left=None,right=None):
+        mask = 1+2+4+8+16
+        #print "MASK command:",mask,me,keyer,masked,jint16(int(top*1000.0)),jint16(int(bottom*1000.0)),jint16(int(left*1000.0)),jint16(int(right*1000.0))
+        print "MASK command:",mask,me,keyer,masked,uint16(top),uint16(bottom),uint16(left),uint16(right)
+        self.ac.sendCmd("CKMs",[mask,me,keyer,masked]+
+		uint16(top)+
+		uint16(bottom)+
+		uint16(left)+
+		uint16(right)	
+		#uint16(int(top*1000.0))+
+		#uint16(int(bottom*1000.0))+
+		#uint16(int(left*1000.0))+
+		#uint16(int(right*1000.0))	
+        )
     def parseCmd(self, cmd, args):
         if cmd == "_VMC":
             pass

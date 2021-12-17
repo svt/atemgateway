@@ -228,6 +228,14 @@ class AtemGateway:
                 left=int(float(left)*1000), 
                 right=int(float(right)*1000),
                 )
+        elif cmd == "KEYMASK":
+            me, keyer, masked, top, bottom, left, right = args
+            self.atem.keyMask(int(me), int(keyer), int(masked),
+                top=int(float(top)*1000), 
+                bottom=int(float(bottom)*1000), 
+                left=int(float(left)*1000), 
+                right=int(float(right)*1000),
+                )
         elif cmd.startswith("MVI"):
             mviewer,window,source = args
             self.atem.multiViewInput(int(mviewer),int(window),int(source))

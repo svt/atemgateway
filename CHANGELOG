@@ -1,3 +1,7 @@
+1.2.3
+Added KEYMASK - John 200501
+Fixed uint16 in atem.py
+
 1.2.2
 Fixed versionreporting to herrchef
 
