@@ -243,6 +243,9 @@ class AtemGateway:
         elif cmd.startswith("MVI"):
             mviewer,window,source = args
             self.atem.multiViewInput(int(mviewer),int(window),int(source))
+        elif cmd.startswith("COLOR"):
+            num,hue,sat,luma = args
+            self.atem.colorgen(int(num), int(hue), int(sat), int(luma))
         elif cmd.startswith("VERSION"):
             if self.atem.version:
                 ver = self.atem.version

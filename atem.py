@@ -421,8 +421,8 @@ class AtemDevice:
     def ssource(self, bg=None):
         masker = MaskDefault()
         bg = masker.getValueOrZero(bg, 1)
-        key=0
-        fore=0
+        key=0 # 2
+        fore=0 # 4
         premulti=0
         clip=0
         gain=0
@@ -441,24 +441,36 @@ class AtemDevice:
         lightdir=0
         lightalt=0
         mask = masker.mask
-        self.ac.sendCmd("CSSc", 
-                uint32(mask)
-                + uint16(bg)
-                + uint16(key)
-                + [fore,premulti]
-                + uint16(clip)
-                + uint16(gain)
-                + [invkey,borderena,borderbevel,0]
-                + uint16(outwidth)
-                + uint16(inwidth)
-                + [outsoft, insoft, bevsoft, bevpos]
-                + uint16(borderhue)
-                + uint16(bordersat)
-                + uint16(borderluma)
-                + uint16(lightdir)
-                + [lightalt,0]
+        if self.v86:
+            self.ac.sendCmd("CSSc", 
+                    [mask,0]
+                    + uint16(bg)
+                    + uint16(key)
+                    + [fore,premulti]
+                    + uint16(clip)
+                    + uint16(gain)
+                    + [invkey,0,0,0]
+                    )
+            # CSBd - border
+        else:
+            self.ac.sendCmd("CSSc", 
+                    uint32(mask)
+                    + uint16(bg)
+                    + uint16(key)
+                    + [fore,premulti]
+                    + uint16(clip)
+                    + uint16(gain)
+                    + [invkey,borderena,borderbevel,0]
+                    + uint16(outwidth)
+                    + uint16(inwidth)
+                    + [outsoft, insoft, bevsoft, bevpos]
+                    + uint16(borderhue)
+                    + uint16(bordersat)
+                    + uint16(borderluma)
+                    + uint16(lightdir)
+                    + [lightalt,0]
 
-                )
+                    )
     def boxsrc(self, boxnum, enable=None, src=None, 
             x=None, y=None, size=None, 
             cropped=None, 
@@ -516,6 +528,17 @@ class AtemDevice:
 		#uint16(int(left*1000.0))+
 		#uint16(int(right*1000.0))	
         )
+    def colorgen(self, num, hue=None, saturation=None, luma=None):
+        masker = MaskDefault()
+        colgen = int(num)
+        hue = masker.getValueOrZero(hue,1)
+        saturation = masker.getValueOrZero(saturation,2)
+        luma = masker.getValueOrZero(luma,4)
+        self.ac.sendCmd("CClV", [masker.mask, colgen]
+                + uint16(hue)
+                + uint16(saturation)
+                + uint16(luma)
+                )
     def parseCmd(self, cmd, args):
         if cmd == "_VMC":
             pass
